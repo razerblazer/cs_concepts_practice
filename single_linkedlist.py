@@ -1,7 +1,28 @@
+import copy
 class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
-        self.next = next    
+        self.next = next
+
+def swapPairs(head):
+    if head.next is None:
+        return
+    head.next.next = head
+    
+
+# 1 -> 2 -> 3 -> 4
+# 2 -> 1 -> 4 -> 3
+def hehexd(head, depth = 0):
+    if head.next is None:
+        return head, depth % 2 == 1
+    next_node, should_flip = hehexd(head.next, depth+1)
+    if should_flip:
+        head.next = next_node.next
+        next_node.next = head
+        return next_node, False
+    head.next = next_node
+    return head, True
+
 def mergeTwoLists(list1, list2):
     if not list1:
         return list2
@@ -24,16 +45,16 @@ def create_linked_list(listinput):
 
 def print_list_result(node):
     lis = []
-    while node.val:
+    while node:
         lis.append(node.val)
         node = node.next
-        if node.next is None:
-            lis.append(node.val)
-            node.val = None
     return lis    
     
     
-a = create_linked_list([])
-b = create_linked_list([])
+a = create_linked_list([1,2,3,4,5,6,7])
+b = create_linked_list([5,6,43,5])
 
-print(mergeTwoLists(a,b))
+#print(hehexd(a))
+print(print_list_result(a))
+a,_ = hehexd(a)
+print(print_list_result(a))
