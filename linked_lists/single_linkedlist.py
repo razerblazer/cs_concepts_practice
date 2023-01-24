@@ -14,8 +14,14 @@ def swapPairs(head):
         return y
     else:
         return head
-    
- 
+def remove(head2, t):
+    if not head2:
+        return head2
+    if t == 0:
+        return head2.next
+    else:
+        remove(head2.next, t-1)
+
 # 2 -> 1 -> 2          3 -> 4
 # 1 -> 2 -> 3 -> 4
 # 2 -> 1 -> 4 -> 3
@@ -64,4 +70,5 @@ b = create_linked_list([5,6,43,5])
 #print(hehexd(a))
 print(print_list_result(a))
 a = swapPairs(a)
+a = remove(a, 3)
 print(print_list_result(a))
