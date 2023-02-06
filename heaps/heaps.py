@@ -56,7 +56,7 @@ class heaptime:
         print (output.getvalue())
         print ('-' * total_width)
         return
-
+"""
 def heapify(arr, n, i):
     largest = i
     l = 2 * i + 1
@@ -78,9 +78,36 @@ def build_max_heap(arr):
     for i in range(n // 2, -1, -1):
         heapify(arr, n, i)
     return arr
+"""
 
-x = [9,2,65,3,6,1,64]
-p=[]
+def insert_helper(arr, position):
+    if position == 0:
+        return
+    parent = (position // 2) - 1
+    if arr[position] > arr[parent]:
+        arr[parent], arr[position] = arr[position], arr[parent]
+    insert_helper(arr, parent)
+    
+    
+#insert into max heap by insertion(insert elements one by one and modify heap as required) O(nlogn)
+def max_insertion(insert, arr):
+    arr.append(insert)
+    insert_helper(arr, len(arr)-1)
+    return arr
+
+test = [-97, -37, -91, -12, -5, -90, -64, -1, -6]
+heapq.heapify(test)
+print(max_insertion(6, [97, 37, 91, 12, 5, 90, 64, 1]))
+print(test)
+o = heaptime(test)
+p = heaptime(max_insertion(6, [97, 37, 91, 12, 5, 90, 64, 1]))
+o.visualize_heap()
+p.visualize_heap()
+#heapify(start from end and modify going up)
+
+
+x = [5, 12, 64, 1, 37, 90, 91, 97]
+"""
 for i in range(len(x)):
     p.append(-x[i])
 
@@ -93,7 +120,7 @@ b=heapq.heapify(p)
 print(p)
 a = heaptime(p)
 a.visualize_heap()
-
+"""
 
 """
 print(heaptime.heap)
