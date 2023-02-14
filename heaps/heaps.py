@@ -1,4 +1,4 @@
-#max/min heapify, pop, add new value+balance, heap search
+#heap sort
 import math
 from io import StringIO
 import heapq
@@ -6,39 +6,6 @@ import heapq
 class heaptime:
     def __init__(self, arr=[]):
         self.heap = arr
-
-    def add(self, value):
-        self.heap.append(value)
-        current = len(self.heap) - 1
-        parent = (current - 1) // 2
-        # Compare and swap with parent until the value is larger or it's at the root
-        while current > 0 and self.heap[current] > self.heap[parent]:
-            self.heap[current], self.heap[parent] = self.heap[parent], self.heap[current]
-            current = parent
-            parent = (current - 1) // 2
-
-    def remove(self):
-        if not self.heap:
-            return None
-        maximum = self.heap[0]
-        last_leaf = self.heap.pop()
-        if self.heap:
-            self.heap[0] = last_leaf
-            current = 0
-            left_child = current * 2 + 1
-            right_child = current * 2 + 2
-            # Compare and swap with larger child until the value is smaller or it's at a leaf node
-            while (left_child < len(self.heap) and last_leaf < self.heap[left_child]) or (right_child < len(self.heap) and last_leaf < self.heap[right_child]):
-                if left_child < len(self.heap) and (right_child >= len(self.heap) or self.heap[left_child] > self.heap[right_child]):
-                    self.heap[current], self.heap[left_child] = self.heap[left_child], self.heap[current]
-                    current = left_child
-                else:
-                    self.heap[current], self.heap[right_child] = self.heap[right_child], self.heap[current]
-                    current = right_child
-                left_child = current * 2 + 1
-                right_child = current * 2 + 2
-        return maximum
-
     def visualize_heap(self, total_width=60, fill=' '):
         output = StringIO()
         last_row = -1
@@ -56,30 +23,7 @@ class heaptime:
         print (output.getvalue())
         print ('-' * total_width)
         return
-"""
-def heapify(arr, n, i):
-    largest = i
-    l = 2 * i + 1
-    r = 2 * i + 2
-
-    if l < n and arr[i] < arr[l]:
-        largest = l
-
-    if r < n and arr[largest] < arr[r]:
-        largest = r
-
-    if largest != i:
-        arr[i],arr[largest] = arr[largest],arr[i]
-        heapify(arr, n, largest)
-
-def build_max_heap(arr):
-    n = len(arr)
-
-    for i in range(n // 2, -1, -1):
-        heapify(arr, n, i)
-    return arr
-"""
-
+    
 def insert_helper(arr, position):
     if position == 0:
         return
@@ -89,7 +33,7 @@ def insert_helper(arr, position):
     insert_helper(arr, parent)
     
     
-#insert into max heap by insertion(insert elements one by one and modify heap as required) O(nlogn)
+#insert into max heap by insertion(insert elements one by one and modify heap as required) O(nlogn) done
 def max_insertion(insert, arr):
     arr.append(insert)
     insert_helper(arr, len(arr)-1)
@@ -97,38 +41,72 @@ def max_insertion(insert, arr):
 
 test = [-97, -37, -91, -12, -5, -90, -64, -1, -6]
 heapq.heapify(test)
-print(max_insertion(6, [97, 37, 91, 12, 5, 90, 64, 1]))
-print(test)
-o = heaptime(test)
-p = heaptime(max_insertion(6, [97, 37, 91, 12, 5, 90, 64, 1]))
-o.visualize_heap()
-p.visualize_heap()
-#heapify(start from end and modify going up)
+#print(max_insertion(6, [97, 37, 91, 12, 5, 90, 64, 1]))
+#print(test)
+#o = heaptime(test)
+#p = heaptime(max_insertion(6, [97, 37, 91, 12, 5, 90, 64, 1]))
+#o.visualize_heap()
+#p.visualize_heap()
 
+#heapify:transform_max_heapify(go to each node, check children and modify going up)
+def max_heapify_helper(arr, parent):
+    left_child = (parent * 2) +1
+    right_child= (parent * 2) +2
+    
+    if left_child > len(arr)-1 and right_child > len(arr)-1:
+        return arr
+    else:
+        if not (right_child > len(arr)-1) and arr[right_child] > arr[left_child] and arr[right_child] > arr[parent]:
+            arr[parent], arr[right_child] = arr[right_child], arr[parent]
+        else:
+            if arr[left_child] > arr[parent]:
+                arr[parent], arr[left_child] = arr[left_child], arr[parent]
+    max_heapify_helper(arr, parent+1)
+    return arr
+        
+def transform_max_heapify(arr):
+    
+    for i in range(len(arr)-1, -1, -1):
+        arr = max_heapify_helper(arr, i)
+    return arr
+#print(transform_max_heapify([10, 20, 15, 12, 40, 25, 18]))
 
-x = [5, 12, 64, 1, 37, 90, 91, 97]
+x = heaptime(transform_max_heapify([10, 20, 15, 12, 40, 25, 18])).visualize_heap()
+
+#literally just pop biggest element from heap and return the new adjusted heap, by repeating this and continuously popping the max/min element from list
+#you can sort stuff this way
+def pop_from_heap(an_actual_heap):
+    if len(an_actual_heap) <= 1 and len(an_actual_heap) != 0:
+        return an_actual_heap.pop() , an_actual_heap
+    popelement, an_actual_heap[0] = an_actual_heap[0], an_actual_heap.pop()
+    transform_max_heapify(an_actual_heap)
+    return popelement, an_actual_heap
+
+#heaptime(pop_from_heap([40, 20, 25, 12, 10, 15, 18])[-1]).visualize_heap()
+
+#heap sort create a min/max heap and keep popping elements from the heap as you go along
+def heap_sort(insert_heap):
+    list_to_pop = []
+    while len(insert_heap) > 0:
+        x = pop_from_heap(insert_heap)
+        insert_heap = x[-1]
+        list_to_pop.insert(0, x[0])
+    return list_to_pop
+print(heap_sort([40, 20, 25, 12, 10, 15, 18]))
+
+#check if an array is a min heap
+def min_heap_check(arr):
+    start = len(arr) // 2
+    for i in range(start, -1, -1):
+        if i*2+1 < len(arr) and arr[i*2+1] < arr[i]:
+            return False
+        if i*2+2 < len(arr) and arr[i*2+2] < arr[i]:
+            return False
+    return True
+print(min_heap_check([2,10,4,5,3,15]))
+
 """
-for i in range(len(x)):
-    p.append(-x[i])
-
-y = heaptime(build_max_heap(x))
-y.visualize_heap()
-print(x)
-
-
-b=heapq.heapify(p)
-print(p)
-a = heaptime(p)
-a.visualize_heap()
-"""
-
-"""
-print(heaptime.heap)
-heaptime.visualize_heap()
 #parent = i/2
 #left = i * 2
 #right= 2i + 1
-heaptime.max_heapify()
-print(heaptime.heap)
-heaptime.visualize_heap()
 """
