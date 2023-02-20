@@ -3,7 +3,7 @@
 #knuth-Morris-Pratt algorithm
 
 """
-Preprocessing involves processing the given pattern and labels the pattern
+Preprocessing involves processing the given pattern and labels the pattern according to the longest prefix suffix
 """
 def preprocessing(pattern):
     if len(pattern) < 1:
