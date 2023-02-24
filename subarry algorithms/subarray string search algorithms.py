@@ -46,20 +46,26 @@ def kunth_morris_pratt_pattern_search_algorithm(string, pattern):
             
     return indexes
 
-def hashfunction(pattern):
+def hashfunction(pattern, base):
     patternval = 0
     for i in range(len(pattern)):
-        patternval += int(ord(pattern[i])) * 2 ** (len(pattern)-i-1)
+        patternval += int(ord(pattern[i])) * (base ** (len(pattern)-i-1))
     return patternval
+
 #sliding algorithm but calculates a hash of the given pattern and compares it with each calculated substring hashes
-def rabin_karp_algorithm(string, pattern):
-    patternval = hashfunction(pattern)
-    x = 0
-    indexes = []
-    while x < len(string) - len(pattern)+1:
-        if patternval == hashfunction(string[x:x+len(pattern)]):
+def rabin_karp_algorithm(string, pattern, hashbase):
+    patternval = hashfunction(pattern, hashbase)
+    rollinghash = hashfunction(string[0:len(pattern)], hashbase)
+    indexes = [0 if rollinghash == patternval else None ]
+    for x in range(1,len(string)-len(pattern)+1):
+        rollinghash -= int(ord(string[x-1])) * (hashbase ** (len(pattern)- 1))
+        rollinghash *= hashbase
+        rollinghash += int(ord(string[x+len(pattern)-1])) * (hashbase ** 0)
+        if patternval == rollinghash:
             indexes.append(x)
-        x += 1
     return indexes
 
-print(rabin_karp_algorithm("GEEKS FOR GEEKS","GEEK"))
+
+def Aho-Corasick_algorithm():
+    
+    return
