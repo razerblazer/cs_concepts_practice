@@ -65,7 +65,30 @@ def rabin_karp_algorithm(string, pattern, hashbase):
             indexes.append(x)
     return indexes
 
+#trie structure object initializer
+class trie:
+    def __init__(self, char=None):
+        self.char = char
+        self.isend = False
+        self.children = {}
 
-def Aho-Corasick_algorithm():
+def make_trie_of_words(words):
+    hold_node = trie("")
+    currentnode = hold_node
+    for word in words:
+        for char in word:
+            if char in currentnode.children:
+                currentnode = currentnode.children[char]
+            else:
+                new_node = trie(char)
+                currentnode.children[char] = new_node
+                node = new_node
+        currentnode = hold_node
+    return hold_node
+#checks for multiple words at a time
+def aho_Corasick_algorithm(string, patterns):
     
     return
+
+
+print(make_trie_of_words(["hello", "hi"]))
