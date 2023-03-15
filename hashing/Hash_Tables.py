@@ -1,81 +1,90 @@
 from math import floor
-from copy import copy
+
+#yes I am aware this already exists in python as a dictionary and there are libraries already implementing this in literally every other popular programming language but why recreate it from scratch lol 
 
 class linkedlist:
     def __init__(self, key, value, nextval=None):
         self.key = key
         self.value = value
         self.nextval = nextval
-#essentially implement a python dictionary from scratch but creating different hashing functions
-#use singly linked list for chaining in the event of a collision
-
+"""        
+essentially implement a python dictionary from scratch but creating different hashing functions
+use singly linked list for chaining in the event of a collision
+in the single most worst possible case where literally every hash translates to the same location in the array, every operation becomes O(n) linear time
+this is why it is important to pick a hash function that will return a good spread and we can always scale up the size of the hash table depending on the number of elements being added to the table
+"""
 class hash_table:
 #hash table size resizes when needed, default hash function is the division method
+#welp just found out duplicates are not allowed
     def __init__(self, arr=[None]*100, hashtype=2):
         self.arr = arr
         self.hashtype = hashtype
         
     def add_value(self, key, value):
-        hashval = self.hashfunctionconfig(self.hashtype)
+        hashval = self.hashfunctionconfig(self.hashtype, key)
         if self.arr[hashval] is None:
             self.arr[hashval] = linkedlist(key, value)
         else:
             currentnode = self.arr[hashval]
-            while currentnode.nextval is not None:
-                currentnode = currentnode.next
+            while True:
+                if currentnode.key == key:
+                    return print(f"Key {key!s} already exists! We will not add that to the table.")
+                if currentnode.nextval is None:
+                    break
+                currentnode = currentnode.nextval
             currentnode.nextval = linkedlist(key, value)
-        return f"The key value pair {key!s}:{value!s} has been added to the hash table!"
+        print(f"The key value pair {key!s}:{value!s} has been added to the hash table!")
     
-    def search(key, value):
-        hashval = hashfunctionconfig(self.hashtype)
+    def search(self, key):
+        hashval = self.hashfunctionconfig(self.hashtype, key)
         if self.arr[hashval] is None:
-            return "key:value does not exist!"
+            return print(f"{key!s} does not exist!")
         else:
             currentnode = self.arr[hashval]
             while True:
-                if currentnode.key == key and currentnode.value == value:
-                    return "key:value exists!"
-                if currentnode.next is None:
+                if currentnode.key == key:
+                    return print(f"The key {key!s} exists and it's value is {currentnode.value!s}!")
+                if currentnode.nextval is None:
                     break
-                currentnode = currentnode.next
-        return "key:value does not exist!"
+                currentnode = currentnode.nextval
+        return print(f"{key!s} does not exist!")
     
-    def delete(key, value):
-        hashval = hashfunction(self.hashtype)
+    def delete(self, key):
+        hashval = self.hashfunctionconfig(self.hashtype, key)
         if self.arr[hashval] is None:
-            return "key:value does not exist!"
+            return print(f"{key!s} does not exist!")
         else:
             currentnode = self.arr[hashval]
             previousnode = None
             while True:
-                if currentnode.key == key and currentnode.value == value:
+                if currentnode.key == key:
                     if previousnode is None:
                         self.arr[hashval] = None
                     else:
-                        previousnode.nextval = None
-                    return f"The key value pair {key!s}:{value!s} has been deleted!"
-                if currentnode.next is None:
+                        previousnode.nextval = None  #creating a copy of the currentnode will deviate it from the actual previous node we want
+                    return print(f"The key value pair has been deleted!")
+                if currentnode.nextval is None:
                     break
-                previousnode = copy(currentnode)
+                previousnode = currentnode
                 currentnode = currentnode.nextval
-        return "key:value does not exist!"
+        return print(f"{key!s} does not exist!")
     
-    def modify(key, value, newvalue):
-        hashval = hashfunction(self.hashtype)
+    def modify(self, key, newvalue):
+        hashval = self.hashfunctionconfig(self.hashtype, key)
         if self.arr[hashval] is None:
-            return "key:value does not exist!"
+            return print("key:value does not exist!")
         else:
             currentnode = self.arr[hashval]
             while True:
-                if currentnode.key == key and currentnode.value == value:
+                if currentnode.key == key:
                     currentnode.value = newvalue
-                    return f"The value in the key value pair {key!s}:{value!s} has been modified!"
+                    return print(f"The value at key {key!s} has been modified to {newvalue!s}!")
                 if currentnode.next is None:
                     break
                 currentnode = currentnode.nextval
-        return "key:value does not exist!"        
+        return print(f"key {key!s} does not exist!")
     
-    def hashfunctionconfig(hashtype):
+    def hashfunctionconfig(self, hashtype, key):
         if hashtype == 1:
             hashval = self.multiply(key)
         elif hashtype == 2:
@@ -108,7 +117,8 @@ class hash_table:
         val = self.createkeyint(key)
         return val % mod
     
-    #pretty simple hash function, we square the value of the key and then take the middle digits of the entire value as the hash(we will use the middle two digits here) 
+    #pretty simple hash function, we square the value of the key and then take the middle digits of the entire value as the hash(we will use the middle two digits here)
+    #not a good idea to use where your key values will be numbers less than 10 and becomes more secure as the key value becomes larger
     def mid_square(self, key): #3
         val = self.createkeyint(key)
         val = val**2
@@ -134,4 +144,18 @@ class hash_table:
     
 
 #testing
-mydictionary = hash_table()
+mydictionary = hash_table(hashtype=4)
+mydictionary.add_value("hello", 0)
+mydictionary.add_value(29,0)
+mydictionary.add_value(40,1)
+mydictionary.add_value(40,2)
+mydictionary.search("ello")
+mydictionary.search(40)
+mydictionary.delete(40)
+mydictionary.search(40)
+mydictionary.delete(40)
+mydictionary.delete(40)
+mydictionary.modify(29, 10)
+mydictionary.search(29)
+
+
