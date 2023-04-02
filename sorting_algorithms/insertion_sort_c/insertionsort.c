@@ -23,24 +23,21 @@ struct myStruct arrayhelper(char *mystr) {
 				*(strrep+i) = *(mystr+lastknown+i);
 			
 			}
+			*(returnarray+elements) = atoi(strrep);
+			elements++;
+			free(strrep);
 			if (*(mystr+offset) == '\0') {
 				break;
 			}
-			printf("The string stored by strrep is %s\n", strrep);
-			*(returnarray+elements) = atoi(strrep);
-			printf("int value %d\n", (atoi(strrep)));
 			lastknown = offset+1;
 			offset++;
-			elements++;
-			free(strrep);
-
 		} else {
 			offset++;
 		}
 	}
 	struct myStruct s1;
 	s1.pointer = returnarray;
-	s1.size = elements+1;
+	s1.size = elements;
 	return s1; //return pointer to integer array in heap
 }
 
@@ -51,7 +48,14 @@ int main(int argc, char *argv[]){
 	myarray = arrayhelper(argv[1]);
 	printf("This is the first element in my array %d\n", *(myarray.pointer));
 	printf("This is the size of the array %d\n", myarray.size);
-//	printf("This is an element that is out of range in my array %d\n",*(heaparray+1));
-//	for (int i=0, i < sizeof(heaparray))
+	printf("This is the inputted array\n");
+	for (int x = 0; x < myarray.size; x++) {
+		if (x != myarray.size - 1){
+			printf("%d,", *(myarray.pointer+x)); 
+		} else {
+		printf("%d", *(myarray.pointer+x));
+		}
+	}	
+	printf("\n");
 	return 1;
 }
