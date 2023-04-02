@@ -38,11 +38,11 @@ struct myStruct arrayhelper(char *mystr) {
 	struct myStruct s1;
 	s1.pointer = returnarray;
 	s1.size = elements;
-	return s1; //return pointer to integer array in heap
+	return s1; //returns struct containing size of the array and pointer to the start of the int array
 }
 
 int main(int argc, char *argv[]){
-	printf("print argument %s\n", argv[1]); //1,2,3,4
+	printf("print argument %s\n", argv[1]); //takes argument input
 	struct myStruct myarray;
 
 	myarray = arrayhelper(argv[1]);
