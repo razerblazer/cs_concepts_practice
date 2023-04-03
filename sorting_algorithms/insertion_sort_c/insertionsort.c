@@ -21,7 +21,6 @@ struct myStruct arrayhelper(char *mystr) {
 			strrep = (char*)calloc(1,sizeof(char));
 			for (int i = 0; i < offset - lastknown; i++) {
 				*(strrep+i) = *(mystr+lastknown+i);
-			
 			}
 			*(returnarray+elements) = atoi(strrep);
 			elements++;
@@ -41,21 +40,43 @@ struct myStruct arrayhelper(char *mystr) {
 	return s1; //returns struct containing size of the array and pointer to the start of the int array
 }
 
-int main(int argc, char *argv[]){
-	printf("print argument %s\n", argv[1]); //takes argument input
-	struct myStruct myarray;
-
-	myarray = arrayhelper(argv[1]);
-	printf("This is the first element in my array %d\n", *(myarray.pointer));
-	printf("This is the size of the array %d\n", myarray.size);
-	printf("This is the inputted array\n");
-	for (int x = 0; x < myarray.size; x++) {
-		if (x != myarray.size - 1){
-			printf("%d,", *(myarray.pointer+x)); 
-		} else {
-		printf("%d", *(myarray.pointer+x));
+//has time of O(N^2) for the worst case scenario and O(N) for the best case scenario(which is literally the case in which the list is already sorted so whats the point of even using this sort)
+void sort_logic(struct myStruct array) {
+	int *arraypointer;
+	arraypointer = array.pointer;
+	for (int index = 1; index < array.size; index++) {
+		int temp = index;
+			
+		while (temp >= 1 && (*(array.pointer+temp-1) > *(array.pointer+temp))){
+			int storenum = *(array.pointer+temp-1);
+			*(array.pointer+temp-1) = *(array.pointer+temp);
+			*(array.pointer+temp) = storenum;
+			temp--;
 		}
-	}	
+	}
+}
+
+int main(int argc, char *argv[]){
+	struct myStruct myarrayinfo;
+	myarrayinfo = arrayhelper(argv[1]);
+	printf("This is the inputted array\n");
+	for (int x = 0; x < myarrayinfo.size; x++) {
+		if (x != myarrayinfo.size - 1){
+			printf("%d,", myarrayinfo.pointer[x]); 
+		} else {
+		printf("%d", myarrayinfo.pointer[x];
+		}
+	}
+	printf("\n");
+	printf("This is the array after being sorted\n");
+	sort_logic(myarrayinfo); //the struct contains the pointer to the array in heap so we can just perform an inplace sort and print the new array once the sort is finished
+	for (int y = 0; y < myarrayinfo.size; y++) {
+		if (y != myarrayinfo.size - 1) {
+			printf("%d,", myarrayinfo.pointer[y]));
+		} else {
+			printf("%d", myarrayinfo.pointer[y]);
+		}
+	}
 	printf("\n");
 	return 1;
 }
