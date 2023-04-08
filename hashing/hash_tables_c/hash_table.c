@@ -17,17 +17,21 @@ struct Node {
 int hashfunction_divide(int key) {
 	return key % table_size; 
 }
-//this function adds a value to the hash table as a linked list Node, in the event of a collision with other keys that produce the same hash; we use the chaining technique
+//This function adds a value to the hash table as a linked list Node, in the event of a collision with other keys that produce the same hash; we use the chaining technique. It also ensures that the inputted value  
 void add_value(int key, int value, struct Node *dict, int (*hashfunction)(int)){
 	int hashtablekey = hashfunction(key);
 	struct Node *pntr = dict+hashtablekey;
+	if (value == NULL) {
+		printf("No NULL values are allowed!\n");
+		return;
+	}
 	if (pntr->value == NULL && pntr->key == NULL) {
 		pntr->key = key;
 		pntr->value = value;
 	} else {
 		do {
-			if (pntr->value == value && pntr->key == key) {
-				printf("The key value pair is already in this hashtable!\n");
+			if (pntr->key == key && pntr->value == value) {
+				printf("The key is already in this hashtable!\n");
 				return;
 			} else if (pntr->next != NULL) {
 				pntr = pntr->next;
@@ -42,23 +46,70 @@ void add_value(int key, int value, struct Node *dict, int (*hashfunction)(int)){
 	}
 	printf("Successfully added key value pair to hash table!\n");
 } 
-void search(int key, int value, struct Node *dict, int (*hashfunction)(int)) {
+
+void search(int key, struct Node *dict, int (*hashfunction)(int)) {
 	int hashtablekey = hashfunction(key);
 	struct Node *pntr = dict+hashtablekey;
-	if (pntr->value == NULL || pntr->key == NULL) {
-		printf("Key value not found\n");
-	} else {
+	if (pntr->value != NULL || pntr->key != NULL) {
 		do {
-			if (pntr->value == value && pntr->key == key) {
-				printf("The key value pair was found in this hashtable!\n");
+			if (pntr->key == key) {
+				printf("The key was found in this hashtable and it has value %d\n", pntr->value);
 				return;
-			} else if (pntr->next != NULL) {
+			} else if (pntr != NULL) {
+				pntr = pntr->next;	
+			}
+		}
+		while (pntr != NULL);
+	}
+	printf("the key value pair was not found!\n");
+}
+//pretty self explanatory function
+void modify(int key, int oldvalue, int newvalue, struct Node *dict, int (*hashfunction)(int)) {
+	int hashtablekey = hashfunction(key);
+	struct Node *pntr = dict+hashtablekey;
+	if (pntr->value != NULL || pntr->key !=NULL) {
+		do {
+			if (pntr->key == key) {
+				pntr->value = newvalue;
+				printf("Successfully changed value from %d into %d \n", oldvalue, pntr->value);
+				return;
+			} else if (pntr != NULL) {
 				pntr = pntr->next;
 			}
 		}
-		while (pntr->next != NULL);
+		while (pntr != NULL);
 	}
-	printf("the key value pair was not found!\n");
+	printf("The key value pair was not found-!\n");
+}
+//removes the node from the hashtable
+void delete(int key, struct Node *dict, int (*hashfunction)(int)) {
+	int hashtablekey = hashfunction(key);
+	struct Node *pntr = dict+hashtablekey;
+	if (pntr->value != NULL && pntr->key != NULL) {
+		if (pntr->next == NULL && pntr->key == key) {
+			pntr->value = NULL;
+			pntr->key = NULL;
+			printf("Removed key value pair from hashtable! \n");
+			return;
+		} else {
+			while (pntr->next != NULL){
+				struct Node *temp = pntr->next;
+				if (temp->key == key) {
+					if (temp->next != NULL) {
+						pntr->next = temp->next;
+						free(temp);
+					} else {
+						pntr->next = NULL;
+						free(temp);
+					}
+					printf("Removed key value pair from table! \n");
+					return;
+				} 
+				pntr = pntr->next;
+			}
+		} 
+	}
+	printf("The key does not exist!\n");
 }
 
 int main() {
@@ -77,7 +128,10 @@ int main() {
 	add_value(mynum, mynum2, mydict, hashfunction_divide);	
 	int key = 5, value = 20;
 	add_value(key, value, mydict, hashfunction_divide);
-	int key2 = 5, value2 = 18;
+	int key2 = 105, value2 = 389;
 	add_value(key2, value2, mydict, hashfunction_divide);
+	int key3 = 205, value3 = 458;
+	delete(key2, mydict, hashfunction_divide);
+	search(key2, mydict, hashfunction_divide);
 	return 0;
 }
