@@ -4,7 +4,7 @@
 
 #define table_size 100
 
-//definition of a linked list for chaining and store a key/value pair
+//Definition of a linked list for chaining and store a key/value pair
 
 struct Node { 
 	int key;
@@ -13,11 +13,11 @@ struct Node {
 };
 
 
-//we will use a hardcoded mod value for this fuction
+//We will use a hardcoded mod value for this fuction
 int hashfunction_divide(int key) {
 	return key % table_size; 
 }
-//This function adds a value to the hash table as a linked list Node, in the event of a collision with other keys that produce the same hash; we use the chaining technique. It also ensures that the inputted value  
+//This function adds a value to the hash table as a linked list Node, in the event of a collision with other keys that produce the same hash; we use the chaining technique. It also ensures that the inputted value does not contain null values  
 void add_value(int key, int value, struct Node *dict, int (*hashfunction)(int)){
 	int hashtablekey = hashfunction(key);
 	struct Node *pntr = dict+hashtablekey;
@@ -31,7 +31,7 @@ void add_value(int key, int value, struct Node *dict, int (*hashfunction)(int)){
 	} else {
 		do {
 			if (pntr->key == key && pntr->value == value) {
-				printf("The key is already in this hashtable!\n");
+				printf("The key is already in this hash table!\n");
 				return;
 			} else if (pntr->next != NULL) {
 				pntr = pntr->next;
@@ -63,10 +63,14 @@ void search(int key, struct Node *dict, int (*hashfunction)(int)) {
 	}
 	printf("the key value pair was not found!\n");
 }
-//pretty self explanatory function
+//Modifies value at the hashkey; we technically don't need the oldvalue input
 void modify(int key, int oldvalue, int newvalue, struct Node *dict, int (*hashfunction)(int)) {
 	int hashtablekey = hashfunction(key);
 	struct Node *pntr = dict+hashtablekey;
+	if (newvalue == NULL) {
+		printf("No NULL values are allowed!\n");
+		return;
+	}
 	if (pntr->value != NULL || pntr->key !=NULL) {
 		do {
 			if (pntr->key == key) {
@@ -79,9 +83,9 @@ void modify(int key, int oldvalue, int newvalue, struct Node *dict, int (*hashfu
 		}
 		while (pntr != NULL);
 	}
-	printf("The key value pair was not found-!\n");
+	printf("The key value pair was not found!\n");
 }
-//removes the node from the hashtable
+//Removes the node from the hash table
 void delete(int key, struct Node *dict, int (*hashfunction)(int)) {
 	int hashtablekey = hashfunction(key);
 	struct Node *pntr = dict+hashtablekey;
@@ -89,7 +93,7 @@ void delete(int key, struct Node *dict, int (*hashfunction)(int)) {
 		if (pntr->next == NULL && pntr->key == key) {
 			pntr->value = NULL;
 			pntr->key = NULL;
-			printf("Removed key value pair from hashtable! \n");
+			printf("Removed key value pair from hash table! \n");
 			return;
 		} else {
 			while (pntr->next != NULL){
@@ -123,7 +127,7 @@ int main() {
 		mynode->next= NULL;
 		mydict[i] = *mynode;
 	}
-	//some test values to add, can't handle strings/char yet
+	//can only handle int values; maybe I'll make it take in any type by passing the address of the value input into a void pointer 
 	int mynum = 5, mynum2 = 18;
 	add_value(mynum, mynum2, mydict, hashfunction_divide);	
 	int key = 5, value = 20;
