@@ -5,8 +5,9 @@ class Node:
         self.left = left
         self.right = right
 
-def sort_helper(entry):
+def sort_helper(entry): 
     return entry[1]
+
 #using sort instead of building minheap(code generated is slightly different)
 def count_character_occurance(string):
     count = {}
@@ -21,41 +22,57 @@ def count_character_occurance(string):
     hold.sort(key=sort_helper)
     return hold
 
-
-
 def build_tree(sortedlist):
     tree = Node([None,None])
     while sortedlist != []:
-        if tree.left is None:
-            tree.left = sortedlist.pop(0)
+        if tree.value[1] is None:
+            constructNode = Node(sortedlist.pop(0))
+            if tree.left is None:
+                tree.left = constructNode
+            else:
+                tree.right = constructNode
+                tree.value[1] = tree.left.value[1]+tree.right.value[1]
             continue
-        elif tree.right is None:
-            tree.right = sortedlist.pop(0)
-            tree.value[1] = tree.left[1]+tree.right[1]
-            continue
-        constructNode = Node([None, None])
-        if tree.value[1] < sortedlist[0][1]:
-            constructNode.left = tree
-            constructNode.right = sortedlist.pop(0)
-            constructNode.value[1] = constructNode.right[1] + constructNode.left.value[1]
         else:
-            constructNode.right = tree
-            constructNode.left = sortedlist.pop(0)
-            constructNode.value[1] = constructNode.right.value[1] + constructNode.left[1]
-        tree = constructNode
-        
+            constructNode = Node([None, None])
+            if tree.value[1] < sortedlist[0][1]:
+                constructNode.left = tree
+                constructNode.right = Node(sortedlist.pop(0))
+                constructNode.value[1] = constructNode.right.value[1] + constructNode.left.value[1]
+            else:
+                constructNode.right = tree
+                constructNode.left = Node(sortedlist.pop(0))
+                constructNode.value[1] = constructNode.right.value[1] + constructNode.left.value[1]
+            tree = constructNode
     return tree
-            
-x = count_character_occurance("absiasnsaijjjdwqkndqwnr")
-print(x)
+
+
+
+def build_codes(root):
+    codes = []
+    def helper(node, current):
+        if not node:
+            return
+        if not node.left and not node.right:
+            codes.append(current)
+        else:
+            helper(node.left, current + ["0"])
+            helper(node.right, current + ["1"])
+    helper(root, [])
+    print(codes)
+    for x in range(len(codes)):
+        codes[x] = ''.join(codes[x])
+    return codes
+        
+    
+
+x = count_character_occurance("bdddaaaaacccccc")
+
 y = build_tree(x)
-print(y)
+print(build_codes(y))
 test = ""
-while True:
-    if not isinstance(y.right, Node):
-        test += "0"
-        break
+while y.left:
     test += "0"
-    y = y.right
+    y = y.left
     
 print(test)
