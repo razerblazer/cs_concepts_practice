@@ -47,7 +47,6 @@ def build_tree(sortedlist):
     return tree
 
 
-
 def build_codes(root):
     codes = []
     def helper(node, current):
@@ -59,7 +58,6 @@ def build_codes(root):
             helper(node.left, current + ["0"])
             helper(node.right, current + ["1"])
     helper(root, [])
-    print(codes)
     for x in range(len(codes)):
         codes[x] = ''.join(codes[x])
     return codes
