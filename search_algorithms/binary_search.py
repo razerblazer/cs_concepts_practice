@@ -4,12 +4,12 @@ def binary_search_vanilla(target, arr):
         return
     half = len(arr) // 2
     if arr[half] == target:
-        return True
+        return half
     else:
         if arr[half] > target:
-            return binary_search_vanilla(target, arr[:half]) or False
+            return binary_search_vanilla(target, arr[:half]) 
         else:
-            return binary_search_vanilla(target, arr[half:]) or False
+            return binary_search_vanilla(target, arr[half:]) 
 
 print(binary_search_vanilla(1, [1,2,4,5,6,7,8]))
 
