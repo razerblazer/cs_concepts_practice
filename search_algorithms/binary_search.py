@@ -14,5 +14,17 @@ def binary_search_vanilla(target, arr):
 print(binary_search_vanilla(1, [1,2,4,5,6,7,8]))
 
 #pointer method
-def binary_search_pointers():
-    return
+def binary_search_pointers(array, v):
+    low = 0
+    high = len(array)
+    while low <= high:
+        mid = (low+high) // 2
+        if array[mid] == v:
+            return mid
+        if array[mid] < v:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return False
+
+print(binary_search_pointers([1,2,3,4,5,6,7,8,9],3))
